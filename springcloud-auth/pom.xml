@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.github.</groupId>
+    <artifactId>springcloud-auth</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>springcloud-auth</name>
+    <description>权限管理</description>
+    <parent>
+        <groupId>org.github.</groupId>
+        <artifactId>springcloud-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.github.</groupId>
+            <artifactId>springcloud-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <jdbc.url>127.0.0.1</jdbc.url>
+                <jdbc.port>3306</jdbc.port>
+                <jdbc.username>root</jdbc.username>
+                <jdbc.password>root</jdbc.password>
+                <redis.url>127.0.0.1</redis.url>
+                <redis.password></redis.password>
+                <redis.port>6379</redis.port>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdbc.url>localhost</jdbc.url>
+                <jdbc.port>3306</jdbc.port>
+                <jdbc.username>root</jdbc.username>
+                <jdbc.password>localhost</jdbc.password>
+                <redis.url>localhost</redis.url>
+                <redis.password></redis.password>
+                <redis.port>6397</redis.port>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

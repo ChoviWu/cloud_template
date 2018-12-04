@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.github..auth.mapper.BasResourceMapper">
+    <resultMap id="BaseResultMap" type="org.github..common.model.BasResource">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="resource_code" property="resourceCode" jdbcType="VARCHAR"/>
+        <result column="resource_name" property="resourceName" jdbcType="VARCHAR"/>
+        <result column="resource_type" property="resourceType" jdbcType="TINYINT"/>
+        <result column="resource_url" property="resourceUrl" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="resource_sort" property="resourceSort" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        id, resource_code as resourceCode, resource_name as resourceName, resource_type as resourceType,
+        resource_url as resourceUrl, parent_id as parentId, resource_sort as resourceSort
+    </sql>
+</mapper>

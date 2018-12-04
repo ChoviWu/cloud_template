@@ -1,0 +1,287 @@
+Index: springcloud-api/springcloud-common/src/main/java/org/github//common/exception/ExceptionMessage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-api/springcloud-common/src/main/java/org/github//common/exception/ExceptionMessage.java	(revision 69bb01581983a3f3bcfa779f9c4bde36a588f0f7)
++++ springcloud-api/springcloud-common/src/main/java/org/github//common/exception/ExceptionMessage.java	(revision )
+@@ -14,7 +14,14 @@
+         USER_IS_NULL("用户不存在", 10000),
+         USER_ROLE_IS_NULL("授权失败，原因：角色为空", 10001),
+         USER_PASSWORD_ERROR("密码错误", 10002),
+-        USER_NAME_ERROR("用户名错误", 10003),;
++        USER_NAME_ERROR("用户名错误", 10003),
++        USER_NAME_IS_NOT_NULL("用户名不能为空", 10004),
++        USER_PASSWORD_IS_NOT_NULL("密码不能为空", 10005),
++
++
++
++
++        ;
+         private String msg;
+         private Integer code;
+ 
+Index: springcloud-api/springcloud-service/src/main/java/org/github//api/web/MyErrorController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-api/springcloud-service/src/main/java/org/github//api/web/MyErrorController.java	(revision )
++++ springcloud-api/springcloud-service/src/main/java/org/github//api/web/MyErrorController.java	(revision )
+@@ -0,0 +1,37 @@
++//package org.github..api.web;
++//
++//import org.springframework.boot.web.servlet.error.ErrorController;
++//import org.springframework.http.HttpStatus;
++//import org.springframework.stereotype.Controller;
++//import org.springframework.web.bind.annotation.RequestMapping;
++//import org.springframework.web.bind.annotation.ResponseBody;
++//import org.springframework.web.bind.annotation.RestController;
++//
++//import javax.servlet.http.HttpServletRequest;
++//import javax.servlet.http.HttpServletResponse;
++//import java.util.HashMap;
++//import java.util.Map;
++//
++//@Controller
++//public class MyErrorController implements ErrorController {
++//
++//    private static final String ERROR_PATH = "/error";
++//
++//    @ResponseBody
++//    @RequestMapping("/error")
++//    public Object error(HttpServletRequest request, HttpServletResponse response){
++//        //获取statusCode:401,404,500
++//        Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
++//        Map<String, Object> message = new HashMap<>();
++//        message.put("code", statusCode);
++//        message.put("msg","请求失败");
++//        message.put("data", null);
++//        return message;
++//    }
++//
++//    @Override
++//    public String getErrorPath() {
++//        return ERROR_PATH;
++//    }
++//
++//}
+Index: springcloud-api/springcloud-service/src/main/java/org/github//api/web/AccessInterceptor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-api/springcloud-service/src/main/java/org/github//api/web/AccessInterceptor.java	(revision 69bb01581983a3f3bcfa779f9c4bde36a588f0f7)
++++ springcloud-api/springcloud-service/src/main/java/org/github//api/web/AccessInterceptor.java	(revision )
+@@ -58,7 +58,7 @@
+ 
+     @Override
+     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+-
++        Integer status = response.getStatus();
+     }
+ 
+     //no need url
+@@ -72,6 +72,9 @@
+     @Override
+     public boolean preHandle(HttpServletRequest request,
+                              HttpServletResponse response, Object handler) throws Exception {
++        if(response.getStatus()!=200){
++            return false;
++        }
+         System.out.println("hs object : " + handler);
+         if (request.getServletPath().contains("/eureka/")) return true;
+         if (redisRepository == null) {
+@@ -111,7 +114,9 @@
+     @Override
+     public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                            Object handler, @Nullable ModelAndView modelAndView) throws Exception {
+-
++        System.out.println();
++        Integer status = response.getStatus();
+     }
++
+ 
+ }
+Index: springcloud-user/src/main/java/org/github//user/service/impl/UserServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-user/src/main/java/org/github//user/service/impl/UserServiceImpl.java	(revision 69bb01581983a3f3bcfa779f9c4bde36a588f0f7)
++++ springcloud-user/src/main/java/org/github//user/service/impl/UserServiceImpl.java	(revision )
+@@ -104,6 +104,8 @@
+ 
+     @Override
+     public Object  login(String userName, String password) {
++        AssertUtil.isNullOrEmpty(userName,ExceptionMessage.User.USER_NAME_IS_NOT_NULL);
++        AssertUtil.isNullOrEmpty(password,ExceptionMessage.User.USER_PASSWORD_IS_NOT_NULL);
+         UserLogin login = new UserLogin();
+         login.setUserName(userName);
+         login.setPassword(password);
+Index: springcloud-api/springcloud-service/src/main/java/org/github//api/web/CustomErrorController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-api/springcloud-service/src/main/java/org/github//api/web/CustomErrorController.java	(revision 69bb01581983a3f3bcfa779f9c4bde36a588f0f7)
++++ springcloud-api/springcloud-service/src/main/java/org/github//api/web/CustomErrorController.java	(revision )
+@@ -1,8 +1,5 @@
+ package org.github..api.web;
+ 
+-import com.google.common.base.Enums;
+-import org.github..common.exception.ExceptionMessage;
+-import org.github..common.util.AssertUtil;
+ import org.springframework.boot.autoconfigure.web.ErrorProperties;
+ import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
+ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+@@ -10,10 +7,14 @@
+ import org.springframework.http.MediaType;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.stereotype.Controller;
++import org.springframework.ui.ModelMap;
+ import org.springframework.web.bind.annotation.RequestMapping;
+ import org.springframework.web.bind.annotation.ResponseBody;
++import org.springframework.web.servlet.ModelAndView;
+ 
+ import javax.servlet.http.HttpServletRequest;
++import javax.servlet.http.HttpServletResponse;
++import java.io.IOException;
+ import java.util.EnumMap;
+ import java.util.HashMap;
+ import java.util.Map;
+@@ -22,15 +23,16 @@
+  * ERROR处理控制器
+  */
+ @Controller
+-@RequestMapping("/error")
+ public class CustomErrorController extends BasicErrorController {
+ 
++    private static final String ERROR_PATH = "/error";
++
+     public CustomErrorController() {
+         super(new DefaultErrorAttributes(), new ErrorProperties());
+     }
+ 
+-    @RequestMapping
+     @ResponseBody
++    @RequestMapping(ERROR_PATH)
+     @Override
+     public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
+         Map<String, Object> body = getErrorAttributes(request,
+@@ -41,8 +43,18 @@
+         message.put("msg", body.get("error"));
+         message.put("data", body.get("message"));
+         //TODO
+-        AssertUtil.isTrue(false, ExceptionMessage.Sys.valueOf(""));
+         return new ResponseEntity<>(message, status);
+     }
+ 
++    @Override
++    public String getErrorPath() {
++        return ERROR_PATH;
++    }
++
++//    @Override
++//    public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
++//        ModelMap model = new ModelMap();
++//        model.addAttribute("error","error");
++//        return new ModelAndView("error", model);
++//    }
+ }
+Index: springcloud-api/springcloud-auth/src/main/java/org/github//auth/bean/UserDetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-api/springcloud-auth/src/main/java/org/github//auth/bean/UserDetails.java	(revision 69bb01581983a3f3bcfa779f9c4bde36a588f0f7)
++++ springcloud-api/springcloud-auth/src/main/java/org/github//auth/bean/UserDetails.java	(revision )
+@@ -32,7 +32,7 @@
+     /**
+      * current User request
+      */
+-    private HttpServletRequest request;
++    private volatile HttpServletRequest request;
+     /**
+      * user login object
+      */
+Index: springcloud-api/springcloud-service/src/main/java/org/github//api/conf/WebMvcConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- springcloud-api/springcloud-service/src/main/java/org/github//api/conf/WebMvcConfig.java	(revision 69bb01581983a3f3bcfa779f9c4bde36a588f0f7)
++++ springcloud-api/springcloud-service/src/main/java/org/github//api/conf/WebMvcConfig.java	(revision )
+@@ -1,16 +1,25 @@
+ package org.github..api.conf;
+ 
++import com.netflix.ribbon.proxy.annotation.Http;
+ import org.github..api.web.AccessInterceptor;
+ import org.github..api.web.SimpleFilter;
+ import org.github..api.web.WebServletListener;
++import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
++import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
++import org.springframework.boot.web.server.*;
+ import org.springframework.boot.web.servlet.FilterRegistrationBean;
+ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
++import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Configuration;
++import org.springframework.http.HttpStatus;
+ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+ 
++import java.util.HashSet;
++import java.util.Set;
++
+ /**
+  * @author
+  * @date 2018/5/30
+@@ -19,7 +28,7 @@
+ public class WebMvcConfig extends WebMvcConfigurerAdapter implements WebMvcConfigurer {
+ 
+     @Bean
+-    FilterRegistrationBean<SimpleFilter> simpleFilterFilterRegistry(){
++    FilterRegistrationBean<SimpleFilter> simpleFilterFilterRegistry() {
+         FilterRegistrationBean filter = new FilterRegistrationBean();
+         filter.setFilter(new SimpleFilter());
+         filter.addUrlPatterns("/api/user/**", "/api/sys/**");
+@@ -28,7 +37,7 @@
+     }
+ 
+     @Bean
+-    ServletListenerRegistrationBean registrationBean(){
++    ServletListenerRegistrationBean registrationBean() {
+         ServletListenerRegistrationBean listenerRegistrationBean = new ServletListenerRegistrationBean();
+         listenerRegistrationBean.setListener(new WebServletListener());
+         return listenerRegistrationBean;
+@@ -37,6 +46,25 @@
+     @Override
+     public void addInterceptors(InterceptorRegistry registry) {
+         registry.addInterceptor(new AccessInterceptor()).addPathPatterns("/api/user/**", "/api/sys/**")
+-                .excludePathPatterns("/eureka/**");
++                .excludePathPatterns("/eureka/**","/**/*.js",
++                        "/**/*.css","/**/*.html","/**/*.font","/**/*.vue");
+     }
+-}
++
++    //错误页面
++    @Bean
++    public ErrorPageRegistrar errorPageRegistrar() {
++        return new MyErrorPageRegistrar();
++    }
++
++    private static class MyErrorPageRegistrar implements ErrorPageRegistrar {
++
++        @Override
++        public void registerErrorPages(ErrorPageRegistry registry) {
++            registry.addErrorPages(new ErrorPage[]{
++                    new ErrorPage(HttpStatus.BAD_REQUEST, "/error"),
++                    new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR,"/error")
++            });
++        }
++
++    }
++}
+\ No newline at end of file

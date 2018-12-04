@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.github..api.conf.WebMvcConfig,\
+org.github..core.conf.JwtConfig,\
+org.github..core.conf.CreatorConfig,\
+org.github..core.conf.PermissionResourceCreater,\
+org.github..core.conf.FeignConfiguration,\
+org.github..core.conf.SwaggerConfig

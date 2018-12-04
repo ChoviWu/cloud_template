@@ -1,0 +1,59 @@
+eureka:
+  client:
+    service-url:
+          defaultZone: http://localhost:8761/eureka/
+spring:
+  application:
+    name: sysservice
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    generate-unique-name: true
+    druid:
+      initial-size: 1
+      max-active: 20
+      validation-query-timeout: 30000
+      min-idle: 5
+      url: jdbc:mysql://127.0.0.1:3306/config?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+      username: root
+      password: localhost
+      pool-prepared-statements: true
+      validation-query: SELECT X FROM DUAL
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: '*.js,*.css,*.font,*.html,*.ico,/druid/*,*.jpeg,*.jpg,*.png,*.gif'
+        principal-session-name: druid_Datasource
+        session-stat-enable:
+        session-stat-max-count: 10
+      max-wait: 30000
+server:
+  port: 8687
+
+#Mybatis
+mybatis:
+  configuration:
+    use-generated-keys: true
+    aggressive-lazy-loading: true
+#cache 缓存
+    cache-enabled: true
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: org.github..common.model
+  type-handlers-package: org.github..sys.mapper
+mapper:
+  identity: MYSQL
+  mappers: tk.mybatis.mapper.common.Mapper
+  not-empty: false
+
+#pageHelper
+pagehelper:
+  offset-as-page-num: 10
+  helper-dialect: mysql
+  reasonable: true
+  auto-dialect: true
+  supportMethodsArguments: true
+  params:
+    count: countSql
+logging:
+  level:
+    org.github..sys.mapper: DEBUG

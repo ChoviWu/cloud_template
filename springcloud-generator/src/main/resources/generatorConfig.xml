@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="Mysql" targetRuntime="MyBatis3">
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <!-- caseSensitive默认false，当数据库表名区分大小写时，可以将该属性设置为true -->
+            <property name="caseSensitive" value="false"/>
+        </plugin>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/user?characterEncoding=utf-8"
+                        userId="root"
+                        password="localhost">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="org.github..common.model"
+                            targetProject="E:\\springcloud-template\\springcloud-api\\springcloud-common\\src\\main\\java"/>
+
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="E:\\springcloud-template\\springcloud-order\\src\\main\\resources"/>
+
+        <javaClientGenerator targetPackage="org.github..order.mapper"
+                             targetProject="E:\\springcloud-template\\springcloud-order\\src\\main\\java" type="XMLMAPPER" />
+
+        <!--<table tableName="sys_config_t" domainObjectName="SysConfig" ></table>-->
+        <table tableName="goods" domainObjectName="Goods" ></table>
+        <table tableName="goods_order" domainObjectName="GoodsOrder" ></table>
+        <!--<table tableName="sys_role" domainObjectName="SysRole" ></table>-->
+        <!--<table tableName="sys_role_resource" domainObjectName="SysRoleResource" ></table>-->
+        <!--<table tableName="sys_resource" domainObjectName="SysResource" ></table>-->
+        <!--<table tableName="bas_role_t" domainObjectName="BasRole" ></table>-->
+        <!--<table tableName="bas_role_resource_t" domainObjectName="BasRoleResource" ></table>-->
+        <!--<table tableName="bas_resource_t" domainObjectName="BasResource" ></table>-->
+
+
+    </context>
+</generatorConfiguration>

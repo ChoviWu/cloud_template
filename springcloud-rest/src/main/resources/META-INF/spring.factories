@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.github..rest.config.FeignConfig,\
+org.github..rest.config.RestFilterConfig

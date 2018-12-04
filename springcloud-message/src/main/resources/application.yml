@@ -1,0 +1,47 @@
+eureka:
+  client:
+    service-url:
+          defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/
+
+server:
+  port: 6262
+spring:
+  application:
+    name: MQSERVICE
+  datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        generate-unique-name: true
+        druid:
+          url: 'jdbc:mysql://@jdbc.url@:@jdbc.port@/user?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false'
+          username: @jdbc.username@
+          password: @jdbc.password@
+  #RabbitMQ
+  rabbitmq:
+    port: 5672
+    host: @rabbit.url@
+    username: @rabbit.username@
+    password: @rabbit.password@
+    dynamic: true
+    # enable ACK
+    virtual-host: /
+    listener:
+      simple:
+        prefetch: 30000
+#        transaction-size: 30
+      direct:
+        acknowledge-mode: manual
+        #enable retry
+        retry:
+          enabled: true
+      simple.acknowledge-mode: manual
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+    cache:
+      channel:
+        size: 10
+
+logging:
+  level.org.github..*.mapper: debug
+

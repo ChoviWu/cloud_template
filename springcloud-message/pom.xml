@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.github.</groupId>
+	<artifactId>springcloud-message</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>springcloud-message</name>
+	<description>消息队列Rabbit-MQ</description>
+
+	<parent>
+		<groupId>org.github.</groupId>
+		<artifactId>springcloud-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+		<!--
+			Springcloud 消息队列分布式
+		<dependency>
+	           <groupId>org.springframework.cloud</groupId>
+			    <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>-->
+		<dependency>
+			<groupId>org.github.</groupId>
+			<artifactId>springcloud-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<rabbit.url>127.0.0.1</rabbit.url>
+				<rabbit.port>5672</rabbit.port>
+				<rabbit.username>guest</rabbit.username>
+				<rabbit.password>guest</rabbit.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<rabbit.url>localhost</rabbit.url>
+				<rabbit.port>5672</rabbit.port>
+				<rabbit.username></rabbit.username>
+				<rabbit.password></rabbit.password>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>

@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.github..redis.RedisConfig,\
+org.github..redis.RedisRepositoryUser,\
+org.github..redis.RedisRepositoryOrder

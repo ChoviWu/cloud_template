@@ -1,0 +1,42 @@
+server:
+  port: 80
+spring:
+  application:
+    name: GATEWAYSERIVICE
+eureka:
+  client:
+    service-url:
+          defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/
+  instance:
+    hostname: localhost   # 指定该Eureka实例的主机名
+    prefer-ip-address: true
+# ribbon request read times
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 60000
+zuul:
+#  add-proxy-headers: true
+  host:
+    connect-timeout-millis: 30000
+  routes:
+#    prefix: /api
+    authservice: /** # api user 转发路由
+    springcloudrest: /** #login auth
+    sysservice:  /api/sys/**
+  ignored-services: userservice
+  rate:
+    limit: 3000
+#      path: /api/user/** # api user 转发路由
+#      serviceId:  authservice
+#      path: /auth #login auth
+#      serviceId:  springcloudrest
+#      serviceId: sysservice
+  #添加主机header
+  add-host-header: true
+  #关闭prefix
+  strip-prefix: false
+  host:
+    socket-timeout-millis: 10000
+    connect-timeout-millis: 10000
+    # request time out
+    connection-request-timeout-millis: 10
